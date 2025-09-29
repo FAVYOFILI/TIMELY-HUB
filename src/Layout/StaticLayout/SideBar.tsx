@@ -1,13 +1,16 @@
 import { NavLink } from "react-router-dom";
-import Logo from "../../assets/timelyimage.jpg"
+import Logo from "../../assets/timelyimage.jpg";
 
 const SideBar: React.FC = () => {
   return (
     <>
-      {/* Sidebar */}
       <aside className="w-[18%] bg-white border-r border-gray-100 flex flex-col py-6 px-4 ">
         <div className="flex items-center mb-8">
-          <img src={Logo} alt="Logo" className="w-[125px] h-[40px] mr-2 object-fill" />
+          <img
+            src={Logo}
+            alt="Logo"
+            className="w-[125px] h-[40px] mr-2 object-fill"
+          />
         </div>
         <nav className="flex-1">
           <ul className="space-y-4">
@@ -16,10 +19,12 @@ const SideBar: React.FC = () => {
                 <span className="material-icons mr-2">My Schedule</span>
               </li>
             </NavLink>
-            <NavLink to="/chat" >
+            <NavLink to="/chat">
               <li className="flex items-center text-gray-600 hover:text-green-700 px-3 py-2 cursor-pointer">
                 <span className="material-icons mr-2">Ai Chat</span>
-                <span className="ml-auto bg-red-500 text-white rounded-full px-2 text-xs">4</span>
+                <span className="ml-auto bg-red-500 text-white rounded-full px-2 text-xs">
+                  4
+                </span>
               </li>
             </NavLink>
             <NavLink to="/upload">
@@ -51,8 +56,6 @@ const SideBar: React.FC = () => {
           </ul>
         </nav>
       </aside>
-
-      
     </>
   );
 };
