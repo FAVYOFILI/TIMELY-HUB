@@ -6,6 +6,7 @@ const RightBar: React.FC = () => {
     title: string;
     time: string;
     type: "class" | "study" | "assignment";
+    date: string;
   }
 
   interface EventsByDate {
@@ -16,6 +17,7 @@ const RightBar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<EventsByDate>({});
   const [showModal, setShowModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<StudyEvent | null>(null);
   const [newEvent, setNewEvent] = useState({
     title: "",
     time: "09:00",
@@ -52,20 +54,83 @@ const RightBar: React.FC = () => {
   const saveEvent = () => {
     if (!newEvent.title.trim()) return;
 
-    const event = {
-      id: Date.now().toString(),
-      ...newEvent,
-    };
+    if (editingEvent) {
+      // Update existing event
+      const key = editingEvent.date;
+      setEvents((prev) => ({
+        ...prev,
+        [key]: prev[key].map((event) =>
+          event.id === editingEvent.id ? { ...event, ...newEvent } : event
+        ),
+      }));
+      setEditingEvent(null);
+    } else {
+      // Create new event
+      const event = {
+        id: Date.now().toString(),
+        ...newEvent,
+        date: formatDateKey(selectedDate),
+      };
 
-    const key = formatDateKey(selectedDate);
-    setEvents((prev) => ({
-      ...prev,
-      [key]: [...(prev[key] || []), event],
-    }));
+      const key = formatDateKey(selectedDate);
+      setEvents((prev) => ({
+        ...prev,
+        [key]: [...(prev[key] || []), event],
+      }));
+    }
 
     setShowModal(false);
     setNewEvent({ title: "", time: "09:00", type: "class" });
   };
+
+  const handleEventClick = (eventDate: string) => {
+    const date = new Date(eventDate);
+    setSelectedDate(date);
+    setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
+  };
+
+  const handleEditEvent = (event: StudyEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingEvent(event);
+    setNewEvent({
+      title: event.title,
+      time: event.time,
+      type: event.type,
+    });
+    setShowModal(true);
+  };
+
+  const handleDeleteEvent = (event: StudyEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const key = event.date;
+    setEvents((prev) => ({
+      ...prev,
+      [key]: prev[key].filter((e) => e.id !== event.id),
+    }));
+  };
+
+  const formatEventDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Tomorrow";
+    } else {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
+  // Get ALL events from all dates and include date info
+  const allEvents = Object.entries(events).flatMap(([date, events]) =>
+    events.map((event) => ({ ...event, date }))
+  );
 
   const selectedEvents = events[formatDateKey(selectedDate)] || [];
   const days = getDaysInMonth();
@@ -145,22 +210,28 @@ const RightBar: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setEditingEvent(null);
+            setNewEvent({ title: "", time: "09:00", type: "class" });
+            setShowModal(true);
+          }}
           className="w-full bg-[#0D9165] text-white py-3 rounded text-[10px] font-medium hover:bg-[#17B883] transition-colors mb-2"
         >
           + Add Event
         </button>
-               {/* Upcoming Event */}
+
+        {/* Upcoming Event - Shows ALL events from ALL days */}
         <div
           className={
-            selectedEvents.length > 3 ? "max-h-[150px] overflow-y-auto" : ""
+            allEvents.length > 3 ? "max-h-[150px] overflow-y-auto" : ""
           }
-        > 
-        <p className="text-[14px] mb-2">Upcoming Event</p>
-          {selectedEvents.map((event) => (
-            <div  
+        >
+          <p className="text-[14px] mb-2">Upcoming Event</p>
+          {allEvents.map((event) => (
+            <div
               key={event.id}
-              className="flex items-center gap-2 p-1 py-3 bg-[#0D9165] text-white rounded mb-1"
+              className="flex items-center gap-2 p-1 py-3 bg-[#0D9165] text-white rounded mb-1 cursor-pointer hover:bg-[#17B883] transition-colors group relative"
+              onClick={() => handleEventClick(event.date)}
             >
               <div
                 className={`w-2 h-2 rounded-full ${
@@ -171,14 +242,35 @@ const RightBar: React.FC = () => {
                     : "bg-amber-400"
                 }`}
               />
-              <span className="truncate flex-1 text-xs">
-                {event.time} {event.title}
-              </span>
+              <div className="flex-1 min-w-0">
+                <div className="truncate text-xs">
+                  {event.time} {event.title}
+                </div>
+                <div className="text-[10px] text-gray-200">
+                  {formatEventDate(event.date)}
+                </div>
+              </div>
+
+              {/* Edit/Delete buttons */}
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={(e) => handleEditEvent(event, e)}
+                  className="w-5 h-5 bg-blue-500 rounded text-white flex items-center justify-center text-[10px] hover:bg-blue-600"
+                >
+                  ✏️
+                </button>
+                <button
+                  onClick={(e) => handleDeleteEvent(event, e)}
+                  className="w-5 h-5 bg-red-500 rounded text-white flex items-center justify-center text-[10px] hover:bg-red-600"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
           ))}
         </div>
 
-        {selectedEvents.length === 0 && (
+        {allEvents.length === 0 && (
           <div className="text-center text-gray-500 text-xs py-2">
             No events for today
           </div>
@@ -189,7 +281,7 @@ const RightBar: React.FC = () => {
         <div className="fixed inset-0 backdrop-blur bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-4 w-full max-w-[280px] text-xs">
             <h3 className="font-poppins font-semibold text-[#102844] mb-3">
-              Add Event
+              {editingEvent ? "Edit Event" : "Add Event"}
             </h3>
 
             <div className="space-y-2">
@@ -233,7 +325,11 @@ const RightBar: React.FC = () => {
 
             <div className="flex gap-2 mt-4">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingEvent(null);
+                  setNewEvent({ title: "", time: "09:00", type: "class" });
+                }}
                 className="flex-1 py-2 bg-gray-100 text-[#102844] rounded font-medium"
               >
                 Cancel
@@ -242,7 +338,7 @@ const RightBar: React.FC = () => {
                 onClick={saveEvent}
                 className="flex-1 py-2 bg-[#0D9165] text-white rounded font-medium hover:bg-[#17B883]"
               >
-                Save
+                {editingEvent ? "Update" : "Save"}
               </button>
             </div>
           </div>

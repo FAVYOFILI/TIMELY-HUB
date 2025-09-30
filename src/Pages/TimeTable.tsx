@@ -341,9 +341,7 @@ const Timetable: React.FC<TimetableProps> = () => {
           <div
             className={`${dayColumnWidth} ${headerHeight} ${colors.headerBg} flex items-center justify-center border-r ${colors.cellBorder} flex-shrink-0`}
           >
-            <span
-              className={`font-semibold text-[12px] sm:text-[14px] ${colors.headerText}`}
-            >
+            <span className={`font-semibold text-[12px] sm:text-[14px] ${colors.headerText}`}>
               Day/Time
             </span>
           </div>
@@ -402,9 +400,7 @@ const Timetable: React.FC<TimetableProps> = () => {
                         timeSlotIndex === timeSlots.length - 1
                           ? "last:border-r-0"
                           : ""
-                      } ${
-                        colors.hoverBg
-                      } transition-all duration-200 relative flex-1 min-w-0`}
+                      } ${colors.hoverBg} transition-all duration-200 relative flex-1 min-w-0`}
                       style={{
                         height: `${cellHeight}px`,
                       }}
