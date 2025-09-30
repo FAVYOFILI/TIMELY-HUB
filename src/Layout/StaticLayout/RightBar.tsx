@@ -255,13 +255,13 @@ const RightBar: React.FC = () => {
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={(e) => handleEditEvent(event, e)}
-                  className="w-5 h-5 bg-blue-500 rounded text-white flex items-center justify-center text-[10px] hover:bg-blue-600"
+                  className="w-5 h-5 rounded text-white flex items-center justify-center text-[10px] hover:bg-white"
                 >
                   ✏️
                 </button>
                 <button
                   onClick={(e) => handleDeleteEvent(event, e)}
-                  className="w-5 h-5 bg-red-500 rounded text-white flex items-center justify-center text-[10px] hover:bg-red-600"
+                  className="w-5 h-5 rounded text-white flex items-center justify-center text-[10px] hover:bg-white "
                 >
                   🗑️
                 </button>
