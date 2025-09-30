@@ -150,16 +150,17 @@ const RightBar: React.FC = () => {
         >
           + Add Event
         </button>
-
+               {/* Upcoming Event */}
         <div
           className={
-            selectedEvents.length > 3 ? "max-h-[350px] overflow-y-auto" : ""
+            selectedEvents.length > 3 ? "max-h-[150px] overflow-y-auto" : ""
           }
-        >
+        > 
+        <p className="text-[14px] mb-2">Upcoming Event</p>
           {selectedEvents.map((event) => (
-            <div
+            <div  
               key={event.id}
-              className="flex items-center gap-2 p-1 py-3 bg-gray-50 rounded mb-1"
+              className="flex items-center gap-2 p-1 py-3 bg-[#0D9165] text-white rounded mb-1"
             >
               <div
                 className={`w-2 h-2 rounded-full ${
