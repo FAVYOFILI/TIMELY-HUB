@@ -22,7 +22,7 @@ const SideBar: React.FC = () => {
         <nav className="flex-1">
           <ul className="space-y-4">
             <NavLink
-              to="/"
+              to="/dashboard"
               className={({ isActive }) =>
                 isActive
                   ? "bg-green-100 text-green-700 font-semibold rounded-lg"
