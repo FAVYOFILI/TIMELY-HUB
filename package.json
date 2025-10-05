@@ -12,7 +12,10 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.11",
+    "ag-grid-community": "^34.2.0",
     "axios": "^1.11.0",
+    "exceljs": "^4.4.0",
+    "handsontable": "^16.1.1",
     "persist": "^0.2.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -21,7 +24,8 @@
     "react-router-dom": "^7.9.2",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
